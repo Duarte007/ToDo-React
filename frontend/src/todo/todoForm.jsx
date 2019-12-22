@@ -12,6 +12,8 @@ export default props => (
 
         <Grid className="12 3 2">
             <IconButton style="primary" icon='plus' onClick={props.handleAdd}/>
+            <IconButton style="info" icon='search' onClick={props.handleSearch}/>
+            <IconButton style="secondary" icon='refresh' onClick={props.reload}/>
         </Grid>
     </div>
 );

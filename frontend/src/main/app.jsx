@@ -5,6 +5,7 @@ import React from 'react';
 import Menu from '../template/menu';
 import Routes from './routes';
 import { BrowserRouter as Router} from "react-router-dom";
+import '../todo/todo.css';
 export default props => (
     <Router>
         <div className="container">

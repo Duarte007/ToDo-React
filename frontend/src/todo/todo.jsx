@@ -19,15 +19,20 @@ export default class Todo extends React.Component {
         this.handleAdd = this.handleAdd.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handleMarkAsDone = this.handleMarkAsDone.bind(this);
+        this.handleMarkAsPending = this.handleMarkAsPending.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
         this.refresh = this.refresh.bind(this);
+        this.reload = this.reload.bind(this);
         this.refresh();
     }
 
-    refresh() {
-        axios.get(`${URL}?sort=-createdAt`).then(success => {
+    refresh(description = '') {
+        const search = description ? `&description__regex=/${description}/` : '';
+        axios.get(`${URL}?sort=-createdAt${search}`).then(success => {
             this.setState({
                 ...this.state,
-                description: '',
+                description: description ? description : '',
                 list: success.data
             });
         });
@@ -49,18 +54,45 @@ export default class Todo extends React.Component {
 
     handleRemove(todo){
         axios.delete(`${URL}/${todo._id}`).then( success => {
-            this.refresh();
+            this.refresh(this.state.description);
         });
+    }
+
+    handleMarkAsDone(todo){
+        axios.put(`${URL}/${todo._id}`, {...todo, done: true}).then(success => {
+            this.refresh(this.state.description);
+        });
+    }
+
+    handleMarkAsPending(todo){
+        axios.put(`${URL}/${todo._id}`, {...todo, done: false}).then(success => {
+            this.refresh(this.state.description);
+        });
+    }
+
+    handleSearch() {
+        this.refresh(this.state.description);
+    }
+
+    reload(){
+        this.refresh();
     }
 
     render(){
         return (
             <React.Fragment>
                 <PageHeader name="Tarefas" small="Cadastro"/>
-                <TodoForm description={this.state.description} 
+                <TodoForm 
+                    description={this.state.description} 
+                    handleSearch={this.handleSearch}
                     handleAdd={this.handleAdd} 
-                    handleChange={this.handleChange}/>
-                <TodoList list={this.state.list} handleRemove={this.handleRemove}/>
+                    handleChange={this.handleChange}
+                    reload={this.reload}/>
+                <TodoList 
+                    list={this.state.list} 
+                    handleRemove={this.handleRemove} 
+                    handleMarkAsDone={this.handleMarkAsDone}
+                    handleMarkAsPending={this.handleMarkAsPending}/>
             </React.Fragment>
         );
     }
