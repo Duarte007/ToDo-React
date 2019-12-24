@@ -47,9 +47,11 @@ export default class Todo extends React.Component {
 
     handleAdd() {
         const description = this.state.description;
-        axios.post(URL, {description}).then( success => {
-            this.refresh();
-        });
+        if(description){
+            axios.post(URL, {description}).then( success => {
+                this.refresh();
+            });
+        }
     }
 
     handleRemove(todo){
